@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 125252840}
   - component: {fileID: 125252839}
   - component: {fileID: 125252838}
-  - component: {fileID: 125252842}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -222,53 +221,85 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &125252842
+--- !u!1 &129226964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 129226965}
+  - component: {fileID: 129226967}
+  - component: {fileID: 129226966}
+  m_Layer: 5
+  m_Name: Turns_text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &129226965
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129226964}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2116867963}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -207.06, y: 816.17114}
+  m_SizeDelta: {x: 485.8829, y: 69.6577}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &129226966
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 125252837}
+  m_GameObject: {fileID: 129226964}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffbbb4b775d22444fa9326cda4858ea1, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touch_position:
-    m_Name: Touch_position
-    m_Type: 0
-    m_ExpectedControlType: Vector2
-    m_Id: fdf53d3b-5fca-4acb-9bb1-b92bf4ce4d8c
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 384f7af1-ee99-43cd-97c3-dc9497535f13
-      m_Path: <Mouse>/position
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Touch_position
-      m_Flags: 0
-    m_Flags: 0
-  touch_press:
-    m_Name: Touch_press
-    m_Type: 1
-    m_ExpectedControlType: Button
-    m_Id: d9818b61-d21d-4bc4-a524-4871cabf32f1
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 2dc81168-ca7f-4535-bf3d-3575c4a92ced
-      m_Path: <Mouse>/leftButton
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Touch_press
-      m_Flags: 0
-    m_Flags: 0
-  swipe_distance: 50
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 60
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 6
+    m_MaxSize: 60
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'Turn count: 0'
+--- !u!222 &129226967
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129226964}
+  m_CullTransparentMesh: 1
 --- !u!1 &1274743470
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,7 +483,9 @@ GameObject:
   - component: {fileID: 1838222880}
   - component: {fileID: 1838222879}
   - component: {fileID: 1838222878}
+  - component: {fileID: 1838222882}
   - component: {fileID: 1838222881}
+  - component: {fileID: 1838222883}
   m_Layer: 5
   m_Name: Table
   m_TagString: Untagged
@@ -488,9 +521,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1838222876}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2741c6eaccf86b4a99305bdb1af9381, type: 3}
+  m_Script: {fileID: 11500000, guid: 414a98bd75868614abbc7433009479d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _tableRect: {fileID: 1838222877}
+  _cellPrefab: {fileID: 2653669670700258026, guid: 1b381b0134af13349a8c41c5ad63aea5, type: 3}
 --- !u!114 &1838222879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -541,14 +576,197 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91c550000aa3f914f8bfa5f4445ba9ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _boardRect: {fileID: 1838222877}
+  tableLayout:
+  - rows:
+    - row: 010101010101010101
+    - row: 010101010101010101
+    - row: 010101010101010101
+    - row: 010101010101010101
+    - row: 010100000000000101
+    - row: 010000000000000001
+    - row: 010000000000000001
+    - row: 010000000000000001
+    - row: 010000000000000001
+    - row: 010100000000000101
+    - row: 010101010101010101
+    - row: 010101010101010101
+    - row: 010101010101010101
+    - row: 010101010101010101
+  - rows:
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+  - rows:
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000100000000
+    - row: 000000010001000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+  - rows:
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000100000000
+    - row: 000001000000010000
+    - row: 000100000000000100
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+  - rows:
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000010001000000
+    - row: 000001000000010000
+    - row: 000100000000000100
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+  - rows:
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000001000000010000
+    - row: 000100000000000100
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+  - rows:
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000010101000000
+    - row: 000001010101010000
+    - row: 000101010101010100
+    - row: 000001010101010000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+    - row: 000000000000000000
+  _tableRect: {fileID: 1838222877}
   _cellPrefab: {fileID: 2653669670700258026, guid: 1b381b0134af13349a8c41c5ad63aea5, type: 3}
   colors:
-  - {r: 0.9716981, g: 0.22459061, b: 0.22459061, a: 1}
-  - {r: 0.4564467, g: 0.764151, b: 0.36405307, a: 1}
-  - {r: 0.8207547, g: 0.76374143, b: 0.13550194, a: 1}
-  - {r: 0.2951673, g: 0.3103873, b: 0.9339623, a: 1}
-  - {r: 0.7830189, g: 0.4823977, b: 0.121885024, a: 1}
+  - {fileID: 952845448607739360, guid: 12bdb58d242ed1646a76e02182d2b727, type: 3}
+  - {fileID: 3017940098295088641, guid: 324ccfaca6c795e429812f3cc68539c7, type: 3}
+  - {fileID: 7361782485139187251, guid: d0288b4643223e3449b6ce2b43b91522, type: 3}
+  - {fileID: 7111508918017836812, guid: 1ed8de697486f5448abe55982beddee5, type: 3}
+  - {fileID: -649531391788552461, guid: b6fde9d73efbc55479c5c34f10e6ef07, type: 3}
+  - {fileID: -6981827254641702772, guid: 5de437b96625f35429009403ea465f59, type: 3}
+--- !u!114 &1838222882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838222876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f184ed1b47e18a0409226850b1043a30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tableController: {fileID: 1838222881}
+--- !u!114 &1838222883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838222876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffbbb4b775d22444fa9326cda4858ea1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  touch_position:
+    m_Name: Touch_position
+    m_Type: 0
+    m_ExpectedControlType: Vector2
+    m_Id: fdf53d3b-5fca-4acb-9bb1-b92bf4ce4d8c
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 384f7af1-ee99-43cd-97c3-dc9497535f13
+      m_Path: <Mouse>/position
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch_position
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 596b1cc1-b2a5-4a7b-b417-6e5f850fe28b
+      m_Path: <Touchscreen>/position
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch_position
+      m_Flags: 0
+    m_Flags: 0
+  touch_press:
+    m_Name: Touch_press
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: d9818b61-d21d-4bc4-a524-4871cabf32f1
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 2dc81168-ca7f-4535-bf3d-3575c4a92ced
+      m_Path: <Mouse>/leftButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch_press
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 83207cc0-422a-4b3a-a369-77c358f5ea2e
+      m_Path: <Touchscreen>/Press
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Touch_press
+      m_Flags: 0
+    m_Flags: 0
+  swipe_distance: 50
 --- !u!1 &2116867962
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,6 +778,7 @@ GameObject:
   - component: {fileID: 2116867963}
   - component: {fileID: 2116867965}
   - component: {fileID: 2116867964}
+  - component: {fileID: 2116867966}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -580,6 +799,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1838222877}
+  - {fileID: 129226965}
   m_Father: {fileID: 125252841}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -625,6 +845,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2116867962}
   m_CullTransparentMesh: 1
+--- !u!114 &2116867966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116867962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c75d48c6c8ed54880c59413bfa29d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turns: {fileID: 129226966}
+  tableController: {fileID: 1838222881}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

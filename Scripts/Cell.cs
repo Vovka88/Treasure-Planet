@@ -3,24 +3,38 @@ using UnityEngine.UI;
 
 public class Cell : MonoBehaviour
 {
-    public enum Cell_Type{
-        None = -1,
-        Blank = 0,
-        Red = 1,
-        Blue = 2,
-        Green = 3,
-        Yellow = 4,
-        Orange = 5,
-    }
     public RectTransform rect;
     [SerializeField] private Image image;
-    private Cell_Type cell_Type;
-    private Point point;
+    private CellData cellData;
 
-    public void Initialize(Cell_Type type, Point point, Color color){
-    // Sprite sprite){
-        cell_Type = type;
-        image.color = color;
-        this.point = point;
+    public void Initialize(CellData cellData, Color color){
+        this.cellData = cellData;
+        if(cellData.cell_Type > 0) image.color = color;
+        else if (cellData.cell_Type <= 0){
+            Color c = new Color();
+            c.a = 0f;
+            image.color = c;
+        }
     }
+
+    public void Initialize(CellData cellData, Sprite sprite){
+        this.cellData = cellData;
+        if(cellData.cell_Type > 0) image.sprite = sprite;
+        else if (cellData.cell_Type <= 0){
+            Color c = new Color();
+            c.a = 0f;
+            image.color = c;
+        }
+    }
+
+    public void Initialize(CellData cellData){
+        this.cellData = cellData;
+        if (cellData.cell_Type <= 0){
+            Color c = new Color();
+            c.a = 0f;
+            image.color = c;
+        }
+    }
+
+    public void UpdateName() => transform.name = $"Cell [{cellData.point.x}; {cellData.point.y}]";
 }

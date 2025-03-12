@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Point : MonoBehaviour
+public class Point
 {
     public int x;
     public int y;
