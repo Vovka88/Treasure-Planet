@@ -317,9 +317,6 @@ MonoBehaviour:
   hp_field: {fileID: 2027740071}
   turns_field: {fileID: 1819063021}
   task_bar: {fileID: 2081970855}
-  header_field: {fileID: 0}
-  score_field: {fileID: 0}
-  menu: {fileID: 0}
 --- !u!114 &531261020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -624,8 +621,9 @@ MonoBehaviour:
   table_width: 9
   table_height: 8
   scoreForTile: 100
-  scoreForEnd: 000000000000000000000000
+  scoreForEnd: 800c00004c1d0000384a0000
   ultraBombSprite: {fileID: -8106650305109777102, guid: b874da27221714843bab8486b6fbfa94, type: 3}
+  level_id: 1
 --- !u!114 &1007275999
 MonoBehaviour:
   m_ObjectHideFlags: 0

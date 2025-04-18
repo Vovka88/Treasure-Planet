@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using TMPro;
 public class AuthUIController : MonoBehaviour
 {
-    public NetworkScript ns;
 
     [Header("AUTH SETTINGS")]
     [SerializeField] private GameObject authMenu;
@@ -88,7 +87,7 @@ public class AuthUIController : MonoBehaviour
             Debug.Log("Токен загружен: " + token);
 
             TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            StartCoroutine(ns.Login(token, tcs));
+            StartCoroutine(DataManager.Instance.ns.Login(token, tcs));
 
             await tcs.Task;
             if (tcs.Task.Result == true)
@@ -116,7 +115,7 @@ public class AuthUIController : MonoBehaviour
         if (registrationMail.text.Length > 3 || registrationPassword.text.Length > 4)
         {
             TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            StartCoroutine(ns.Registration(registrationMail.text, registrationPassword.text, tcs));
+            StartCoroutine(DataManager.Instance.ns.Registration(registrationMail.text, registrationPassword.text, tcs));
             loadingScreen.SetActive(true);
             
             await tcs.Task;
@@ -136,7 +135,7 @@ public class AuthUIController : MonoBehaviour
         if (loginMail.text.Length > 3 || loginPassword.text.Length > 4)
         {
             TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-            StartCoroutine(ns.Login(loginMail.text, loginPassword.text, tcs));
+            StartCoroutine(DataManager.Instance.ns.Login(loginMail.text, loginPassword.text, tcs));
             await tcs.Task;
             ToggleMenu(new GameObject());
         }
@@ -149,14 +148,14 @@ public class AuthUIController : MonoBehaviour
     public async Task AccountLogout()
     {
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-        StartCoroutine(ns.Logout(tcs));
+        StartCoroutine(DataManager.Instance.ns.Logout(tcs));
         await tcs.Task; // Ожидаем завершения корутины
     }
 
     public async Task AccountDelete()
     {
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-        StartCoroutine(ns.DeleteAccount(tcs));
+        StartCoroutine(DataManager.Instance.ns.DeleteAccount(tcs));
         await tcs.Task;
     }
 }

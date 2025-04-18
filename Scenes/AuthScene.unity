@@ -3015,7 +3015,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c69329e505ed784e8a38485461549b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ns: {fileID: 843187482}
   authMenu: {fileID: 2002984111}
   loginMenu: {fileID: 46916419}
   loginMail: {fileID: 534286033}
@@ -3051,13 +3050,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1c75d48c6c8ed54880c59413bfa29d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ns: {fileID: 0}
+  token: 
   player_id: 0
+  username: 
   player_avatar_id: 0
   player_hp: 0
   player_money: 0
+  avatars:
+  - {fileID: 8655731413827654843, guid: 46e12c3ad1f2eb946935330bff546e34, type: 3}
+  - {fileID: 5700300352925533352, guid: c266edf435e9b0240944a360622c6bc3, type: 3}
   json_levels: 
+  friends_array:
+    players: []
+  levels_array:
+    levels: []
   current_level: 0
   current_score: 0
+  isReturnedFromLevel: 0
 --- !u!1 &852781630
 GameObject:
   m_ObjectHideFlags: 0

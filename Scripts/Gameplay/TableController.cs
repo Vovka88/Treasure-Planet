@@ -23,7 +23,6 @@ public class TableController : MonoBehaviour
     [SerializeField] public LevelTarget[] targetsOnLevel;
     [HideInInspector] public CellFactory cellFactory;
     private MatchChecker matchChecker;
-    private NetworkScript ns;
 
     [HideInInspector] public CellData[,] table;
     public int table_width;
@@ -53,7 +52,6 @@ public class TableController : MonoBehaviour
     {
         cellFactory = GetComponent<CellFactory>();
         matchChecker = GetComponent<MatchChecker>();
-        ns = GetComponent<NetworkScript>();
 
         Input.simulateMouseWithTouches = false;
 
@@ -435,7 +433,7 @@ public class TableController : MonoBehaviour
         Debug.Log($"Game ended! | Score: {DataManager.Instance.current_score}");
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
-        if (ns == null)
+        if (DataManager.Instance.ns == null)
         {
             Debug.LogError("ns is NULL! Coroutine won't start.");
             return;
@@ -443,6 +441,7 @@ public class TableController : MonoBehaviour
 
         if (targetsOnLevel.All(t => t.count <= 0))
         {
+            Debug.Log("WIN");
             bool completed = true;
             int score = DataManager.Instance.current_score;
             List<bool> stars_completed = new List<bool>();
@@ -452,24 +451,31 @@ public class TableController : MonoBehaviour
                 if (score >= item) stars_completed.Add(true);
             }
 
-            StartCoroutine(ns.SaveLevelData(level_id, stars_completed.Count, completed, tcs));
-
-            await tcs.Task.ContinueWith(_ =>
-            {
-                Debug.Log("Coroutine finished!");
-            }, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-        else
-        {
-            bool completed = false;
-            int score = DataManager.Instance.current_score;
-
-            StartCoroutine(ns.SaveLevelData(level_id, 0, completed, tcs));
+            Debug.Log($"Отправляем запрос: score = {score}, stars = {stars_completed.Count}, completed = {completed}");
+            StartCoroutine(DataManager.Instance.ns.SaveLevelData(level_id, stars_completed.Count, completed, tcs));
 
             await tcs.Task.ContinueWith(_ =>
             {
                 Debug.Log("Coroutine finished!");
                 DataManager.Instance.current_level = level_id;
+                DataManager.Instance.isReturnedFromLevel = true;
+                SceneManager.LoadScene(1);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+        else
+        {
+            Debug.Log("LOSE");
+            bool completed = false;
+            int score = DataManager.Instance.current_score;
+
+            Debug.Log($"Отправляем запрос: score = {score}, stars = {0}, completed = {completed}");
+            StartCoroutine(DataManager.Instance.ns.SaveLevelData(level_id, 0, completed, tcs));
+
+            await tcs.Task.ContinueWith(_ =>
+            {
+                Debug.Log("Coroutine finished!");
+                DataManager.Instance.current_level = level_id;
+                DataManager.Instance.isReturnedFromLevel = true;
                 SceneManager.LoadScene(1);
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }

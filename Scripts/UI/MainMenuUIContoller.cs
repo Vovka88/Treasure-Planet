@@ -3,20 +3,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MainMenuUIContoller : MonoBehaviour
 {
-    public NetworkScript ns;
-
-
-
     [Header("MENU ELLEMENTS ON PAGE")]
     [SerializeField] private GameObject blur;
+    [SerializeField] private GameObject blocking_screen;
     [SerializeField] private GameObject loading_screen;
     private bool isBlurOn = false;
+    private bool isGlobalMapOn = true;
 
 
     [Header("MENU ELLEMENTS ON PAGE")]
@@ -32,8 +29,8 @@ public class MainMenuUIContoller : MonoBehaviour
     [SerializeField] private TMP_Text money_field;
 
     [SerializeField] private Image player_icon;
-    [SerializeField] private Sprite[] avatars;
     [SerializeField] private Image ship;
+
 
     [Header("LEVELS BUTTONS")]
     [SerializeField] private ScriptableButton[] levels_buttons;
@@ -48,11 +45,28 @@ public class MainMenuUIContoller : MonoBehaviour
     [SerializeField] private Image full_star;
     [SerializeField] private Image empty_star;
 
-    void Awake()
+
+    [Header("PROFILE")]
+    [SerializeField] private GameObject profile_menu;
+
+    [Header("MAIN MENUS")]
+    [SerializeField] private GameObject events_menu;
+    [SerializeField] private GameObject friends_menu;
+    [SerializeField] private GameObject shop_menu;
+    [SerializeField] private GameObject shadow;
+
+
+
+
+
+
+    async void Awake()
     {
+        DataManager.OnPlayerDataUpdated += SetPlayerData;
         Invoke(nameof(GetLevels), 0.1f);
-        SetPlayerData();
-        // await InitializeLevels();
+        await GetFriendsAsync();
+
+        DataManager.Instance.TriggerPlayerDataUpdated();
     }
 
     public void GetLevels()
@@ -60,18 +74,23 @@ public class MainMenuUIContoller : MonoBehaviour
         _ = AccountLevels();
     }
 
+    public void GetFriends()
+    {
+        _ = GetFriendsAsync();
+    }
+
     public async Task AccountLevels()
     {
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
-        if (ns == null)
+        if (DataManager.Instance.ns == null)
         {
             Debug.LogError("ns is NULL! Coroutine won't start.");
             return;
         }
 
         loading_screen.SetActive(true);
-        StartCoroutine(ns.GetPlayerLevels(tcs));
+        StartCoroutine(DataManager.Instance.ns.GetPlayerLevels(tcs));
         await tcs.Task;
 
         loading_screen.SetActive(false);
@@ -90,17 +109,38 @@ public class MainMenuUIContoller : MonoBehaviour
     }
 
 
+
+    public async Task GetFriendsAsync()
+    {
+        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+
+        if (DataManager.Instance.ns == null)
+        {
+            Debug.LogError("ns is NULL! Coroutine won't start.");
+            return;
+        }
+
+        loading_screen.SetActive(true);
+        // StartCoroutine(ns.UpdateUsernameAndAvatar("new_user_test", 2, tcs));
+        StartCoroutine(DataManager.Instance.ns.GetFriends(tcs));
+        await tcs.Task;
+
+        loading_screen.SetActive(false);
+    }
+
+
+
     public void SetPlayerData()
     {
         hp_field.text = DataManager.Instance.player_hp.ToString();
         money_field.text = DataManager.Instance.player_money.ToString();
-        player_icon.sprite = avatars[DataManager.Instance.player_avatar_id];
+        player_icon.sprite = DataManager.Instance.avatars[DataManager.Instance.player_avatar_id - 1];
         ship.sprite = player_icon.sprite;
     }
 
     private async Task InitializeLevels()
     {
-        Debug.Log("Интициализация уровней вызвана");
+        // Debug.Log("Интициализация уровней вызвана");
 
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
@@ -142,9 +182,44 @@ public class MainMenuUIContoller : MonoBehaviour
 
         tcs.SetResult(true);
         await tcs.Task;
+
+        if (DataManager.Instance.isReturnedFromLevel) await InstantiateEndMenu();
     }
 
+    public void ToogleMenu(GameObject menu)
+    {
+        if (menu != null)
+        {
+            bool isIt = false;
+            blocking_screen.SetActive(true);
+            
+            if (menu == events_menu)
+            {
+                isIt = true;
+                events_menu.SetActive(isIt);
+            }
+            else if (menu == friends_menu)
+            {
+                isIt = true;
+                friends_menu.SetActive(isIt);
+            }
+            else if (menu == shop_menu)
+            {
+                isIt = true;
+                shop_menu.SetActive(isIt);
+            }
 
+
+            if (!isIt)
+            {
+                blocking_screen.SetActive(false);
+
+                events_menu.SetActive(isIt);
+                friends_menu.SetActive(isIt);
+                shop_menu.SetActive(isIt);
+            }
+        }
+    }
 
 
 
@@ -173,6 +248,16 @@ public class MainMenuUIContoller : MonoBehaviour
         menu.transform.DOJump(menu_position_end.position, 10, 1, 1);
     }
 
+    public void OpenProfile()
+    {
+        isBlurOn = true;
+        blur.SetActive(isBlurOn);
+
+        profile_menu.SetActive(true);
+        // menu = Instantiate(profile_menu, menu_position_start);
+        // menu.transform.DOJump(menu_position_end.position, 10, 1, 1);
+    }
+
     public void InstantiateMenu(int id)
     {
         if (lvlMenu.TryGetComponent(out LevelMenu menu))
@@ -184,11 +269,13 @@ public class MainMenuUIContoller : MonoBehaviour
     }
 
 
-    public void InstantiateEndMenu()
+    public async Task InstantiateEndMenu()
     {
+        isBlurOn = true;
+        blur.SetActive(isBlurOn);
         ending_menu.SetActive(true);
         JsonLevelData levelData = DataManager.Instance.levels_array.levels.ToList().Find(t => t.level_id == DataManager.Instance.current_level);
-        if (levelData.is_completed)
+        if (levelData.completed == 1)
         {
             header_field.text = "РІВЕНЬ ПРОЙДЕНИЙ!";
             for (int i = 0; i < positions_for_star.Length; i++)
@@ -205,12 +292,9 @@ public class MainMenuUIContoller : MonoBehaviour
         score_field.text = "Рахунок: " + levelData.score.ToString();
     }
 
-    public void CloseEndMenu(){
+    public void CloseEndMenu()
+    {
         ending_menu.SetActive(false);
+        blur.SetActive(false);
     }
-
-
-
-
-
 }

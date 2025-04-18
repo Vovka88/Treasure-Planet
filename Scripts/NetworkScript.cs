@@ -8,26 +8,56 @@ using UnityEngine.Networking;
 
 public class NetworkScript : MonoBehaviour
 {
+    //     public static NetworkScript Instance { get; private set; }
     private string apiUrlBase = "http://127.0.0.1:8000/api"; // Используем API-роут
+
+    // void Awake()
+    // {
+    //     Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+    //     if (Instance == null)
+    //     {
+    //         Instance = this;
+    //         DontDestroyOnLoad(gameObject);
+    //     }
+    //     else
+    //     {
+    //         Destroy(gameObject);
+    //     }
+    // }
+
 
     ///----------------------------
     /// PLAYER CODE PART
     ///----------------------------
 
-    IEnumerator GetUsers()
+    public IEnumerator GetUsers(TaskCompletionSource<bool> tcs)
     {
-        string apiUrl = $"{apiUrlBase}/players";
-        using (UnityWebRequest request = UnityWebRequest.Get(apiUrl))
+        string apiUrl = $"{apiUrlBase}/getplayers";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        using (UnityWebRequest request = new UnityWebRequest(apiUrl, "POST"))
         {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log("Response: " + request.downloadHandler.text);
+                string json = request.downloadHandler.text;
+                var data = JsonUtility.FromJson<JsonDataList>(json);
+
+                // Сохранение токена
+                DataManager.Instance.players_no_friends_array = data;
+                tcs.SetResult(true);
             }
             else
             {
                 Debug.LogError("Error: " + request.error);
+                tcs.SetResult(false);
             }
         }
     }
@@ -58,7 +88,6 @@ public class NetworkScript : MonoBehaviour
 
                 yield return SafeWriteToFile(temp.token);
                 DataManager.Instance.player_id = temp.player_id;
-                // Debug.Log("Успешная авторизация");
                 tcs.SetResult(true);
             }
             else
@@ -69,6 +98,7 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
+    // Логін 2 "Написано"
     public IEnumerator Login(string token, TaskCompletionSource<bool> tcs)
     {
         string loginUrl = $"{apiUrlBase}/loginByToken";
@@ -87,17 +117,16 @@ public class NetworkScript : MonoBehaviour
             if (request.result == UnityWebRequest.Result.Success)
             {
                 string json = request.downloadHandler.text;
-                Debug.Log("Получен json: " + json);
                 var data = JsonUtility.FromJson<JsonData>(json);
 
                 // Сохранение токена
-
+                DataManager.Instance.token = token;
                 DataManager.Instance.player_id = data.player_id;
+                DataManager.Instance.username = data.username;
                 DataManager.Instance.player_avatar_id = data.player_avatar_id;
                 DataManager.Instance.player_id = data.player_id;
                 DataManager.Instance.player_hp = data.player_hp;
                 DataManager.Instance.player_money = data.player_money;
-                Debug.Log("Успешная авторизация");
                 tcs.SetResult(true);
             }
             else
@@ -108,15 +137,17 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
-    // Оновлення аккаунту "не написано"
-    public IEnumerator UpdateData(string token, TaskCompletionSource<bool> tcs)
+    // Оновлення аккаунту "написано"
+    public IEnumerator UpdateUsernameAndAvatar(string username, int avatar_id, TaskCompletionSource<bool> tcs)
     {
-        string loginUrl = $"{apiUrlBase}/loginByToken";
+        string scoreUrl = $"{apiUrlBase}/updateusername";
 
-        string jsonData = "{\"token\": \"" + token + "\", \"name\": \"" + "\"}";
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id +
+                  ", \"username\": \"" + username +
+                  "\", \"avatar_id\": " + avatar_id + "}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
-        using (UnityWebRequest request = new UnityWebRequest(loginUrl, "POST"))
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
         {
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
@@ -126,17 +157,11 @@ public class NetworkScript : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                string json = request.downloadHandler.text;
-                Debug.Log("Получен json: " + json);
-                var data = JsonUtility.FromJson<JsonData>(json);
-
-                // Сохранение токена
-                Debug.Log("Успешная авторизация");
                 tcs.SetResult(true);
             }
             else
             {
-                Debug.LogError("Ошибка входа: " + request.error);
+                Debug.LogError("Ошибка обновления " + request.error);
                 tcs.SetResult(false);
             }
         }
@@ -174,6 +199,7 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
+    // Выход из аккаунта (написано)
     public IEnumerator Logout(TaskCompletionSource<bool> tcs)
     {
         string logoutUrl = $"{apiUrlBase}/logout";
@@ -204,6 +230,7 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
+    // Удаление аккаунта (написано)
     public IEnumerator DeleteAccount(TaskCompletionSource<bool> tcs)
     {
         string logoutUrl = $"{apiUrlBase}/deleteUser"; ;
@@ -250,6 +277,7 @@ public class NetworkScript : MonoBehaviour
     /// LEVELS CODE PART
     ///----------------------------
 
+    // Получение данных левела (написано) 
     public IEnumerator GetLevelScore(int levelId, TaskCompletionSource<bool> tcs)
     {
         string scoreUrl = $"{apiUrlBase}/getstats";
@@ -279,6 +307,7 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
+    // Получение уровней игрока (написано) 
     public IEnumerator GetPlayerLevels(TaskCompletionSource<bool> tcs)
     {
         string scoreUrl = $"{apiUrlBase}/getlevels";
@@ -311,15 +340,21 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
+    // Сохранение данных уровня (написано)
     public IEnumerator SaveLevelData(int level_id, int count_of_stars, bool isCompleted, TaskCompletionSource<bool> tcs)
     {
         string scoreUrl = $"{apiUrlBase}/savelevelstats";
 
-        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id +
-                  ", \"level_id\": " + level_id +
-                  ", \"score\": " + DataManager.Instance.current_score +
-                  ", \"count_of_stars\": " + count_of_stars +
-                  ", \"completed\": " + isCompleted + "}";
+        JsonLevelData data = new JsonLevelData
+        {
+            player_id = DataManager.Instance.player_id,
+            level_id = level_id,
+            score = DataManager.Instance.current_score,
+            count_of_stars = count_of_stars,
+            completed = isCompleted ? 1 : 0
+        };
+
+        string jsonData = JsonUtility.ToJson(data);
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
         using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
@@ -332,7 +367,8 @@ public class NetworkScript : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log("Данные Сохранены");
+                string json = request.downloadHandler.text;   
+                Debug.Log("Данные Сохранены: " + json);
                 tcs.SetResult(true);
             }
             else
@@ -343,6 +379,203 @@ public class NetworkScript : MonoBehaviour
         }
     }
 
+    ///----------------------------
+    /// FRIENDS CODE PART
+    ///----------------------------
 
+
+    // Получение друзей (написано)
+    public IEnumerator GetFriends(TaskCompletionSource<bool> tcs)
+    {
+        string scoreUrl = $"{apiUrlBase}/getfriends";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string json = request.downloadHandler.text;
+                var data = JsonUtility.FromJson<JsonDataList>(json);
+
+                DataManager.Instance.friends_array = data;
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка получения " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
+
+    // Получение инвайтов в друзья (написано)
+    public IEnumerator GetFriendsInvites(TaskCompletionSource<bool> tcs)
+    {
+        string scoreUrl = $"{apiUrlBase}/getfriendsinvites";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string json = request.downloadHandler.text;
+                var data = JsonUtility.FromJson<JsonDataList>(json);
+
+                DataManager.Instance.requested_friends_array = data;
+
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка получения " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
+
+    // Отправка инвайтов в друзей (написано)
+    public IEnumerator SendInviteToFriend(int friend_id, TaskCompletionSource<bool> tcs)
+    {
+        string scoreUrl = $"{apiUrlBase}/sendfriendinvite";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id +
+                            ", \"friend_id\": " + friend_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                // string json = request.downloadHandler.text;
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка удаления " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
+
+    // Принятие в друзья (написано)
+    public IEnumerator AcceptInviteToFriend(int friend_id, TaskCompletionSource<bool> tcs)
+    {
+        string scoreUrl = $"{apiUrlBase}/acceptfriendinvite";
+
+        string jsonData = "{\"player_id\": " + friend_id +
+                            ", \"friend_id\": " + DataManager.Instance.player_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        Debug.LogError(DataManager.Instance.player_id);
+        Debug.LogError(friend_id);
+
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                // string json = request.downloadHandler.text;
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка удаления " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
+
+
+    // Отмена приглашения в друзья (написано)
+    public IEnumerator DeclineInviteToFriend(int friend_id, TaskCompletionSource<bool> tcs)
+    {
+        string scoreUrl = $"{apiUrlBase}/declinefriendinvite";
+
+        string jsonData = "{\"player_id\": " + friend_id +
+                            ", \"friend_id\": " + DataManager.Instance.player_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                // string json = request.downloadHandler.text;
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка удаления " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
+
+    // Удаление из друзей ( написано)
+    public IEnumerator DeleteFromFriends(int friend_id, TaskCompletionSource<bool> tcs)
+    {
+        Debug.Log("Starting friend deleting");
+        string scoreUrl = $"{apiUrlBase}/deletefriend";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id +
+                            ", \"friend_id\": " + friend_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+        Debug.LogError(DataManager.Instance.player_id);
+        Debug.LogError(friend_id);
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                // string json = request.downloadHandler.text;
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка удаления " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
 
 }
