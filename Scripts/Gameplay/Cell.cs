@@ -6,14 +6,12 @@ public class Cell : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 {
     public RectTransform rect;
     [SerializeField] public Image image;
-    // [SerializeField] private Sprite defaultSprite;
-    // [SerializeField] private Sprite bombSprite;
-    // [SerializeField] private Sprite spliterSprite;
     private CellData cellData;
     private Vector2 dragStart;
     private float minSwipeDistance = 10f;
     private bool isHorizontal;
     public TableController tableController;
+    public GameObject particles;
 
     public void Initialize(CellData cellData, Color color)
     {
@@ -27,31 +25,13 @@ public class Cell : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
     }
 
-    // public void Initialize(CellData cellData, Sprite sprite, Sprite bombSprite, Sprite spliterSprite)
-    // {
-    //     this.cellData = cellData;
-    //     cellData.cell_Version = CellData.Cell_Version.Default;
-    //     if (cellData.cell_Type > 0) {
-    //         this.defaultSprite = sprite;
-    //         this.bombSprite = bombSprite;
-    //         this.spliterSprite = spliterSprite;
-    //         UpdateSprite();
-    //     }
-    //     else if (cellData.cell_Type <= 0)
-    //     {
-    //         Color c = new Color();
-    //         c.a = 0f;
-    //         image.color = c;
-    //     }
-    // }
-
-    public void Initialize(CellData cellData, Sprite sprite)
+    public void Initialize(CellData cellData, Sprite sprite, GameObject particles)
     {
         this.cellData = cellData;
         if (cellData.cell_Type > 0)
         {
             image.sprite = sprite;
-            // UpdateSprite();
+            this.particles = particles;
         }
         else if (cellData.cell_Type <= 0)
         {
@@ -72,27 +52,28 @@ public class Cell : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
     }
 
-    // public void UpdateSprite(){
-    //     switch (cellData.cell_Version)
-    //     {
-    //         case CellData.Cell_Version.Bomb: 
-    //             image.sprite = bombSprite;
-    //             image.rectTransform.rotation = Quaternion.Euler(0, 0, 0);
-    //             break;
-    //         case CellData.Cell_Version.Vertical_Spliter: 
-    //             image.sprite = spliterSprite;
-    //             image.rectTransform.rotation = Quaternion.Euler(0, 0, 0);
-    //             break;
-    //         case CellData.Cell_Version.Horizontal_Spliter: 
-    //             image.sprite = spliterSprite;
-    //             image.rectTransform.rotation = Quaternion.Euler(0, 0, 90);
-    //             break;
-    //         default:
-    //             image.sprite = defaultSprite;
-    //             image.rectTransform.rotation = Quaternion.Euler(0, 0, 0);
-    //             break;
-    //     }
-    // }
+    public void InstantiateParticles()
+    {
+        if (particles != null)
+        {
+            GameObject instance = Instantiate(particles, transform.parent); // Спавним не как дочерний к клетке, а в том же уровне
+            instance.transform.position = new Vector3(transform.position.x, transform.position.y, -1); // Помещаем на позицию клетки
+            instance.transform.localScale = Vector3.one; // Убеждаемся, что масштаб нормальный
+
+            ParticleSystem ps = instance.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Play();
+                Destroy(instance, ps.main.duration + ps.main.startLifetime.constantMax); // Удаляем через время жизни
+            }
+            else
+            {
+                Destroy(instance, 2f); // Фоллбек
+            }
+
+            Debug.Log("Effect instantiated at: " + transform.position);
+        }
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {

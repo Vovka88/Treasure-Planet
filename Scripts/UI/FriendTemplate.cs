@@ -29,8 +29,7 @@ public class FriendTemplate : MonoBehaviour
     public void InstantiateFriend(int friend_id, JsonDataList array, FriendTemplateType mode)
     {
         username.text = array.players[friend_id].username;
-        avatar.sprite = DataManager.Instance.avatars[array.players[friend_id].player_avatar_id];
-
+        avatar.sprite = DataManager.Instance.avatars[array.players[friend_id].avatar_id - 1];
         background.sprite = bg_sprites[mode < FriendTemplateType.Friend ? 1 : 0];
         btn_add.GetComponent<Image>().sprite = btn_sprites[mode < FriendTemplateType.Friend ? 1 : 0];
 
@@ -71,7 +70,7 @@ public class FriendTemplate : MonoBehaviour
     private async Task DeleteFromFriendAsync(int friend_id)
     {
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-        StartCoroutine(DataManager.Instance.ns.DeleteFromFriends(friend_id + 3, tcs));
+        StartCoroutine(DataManager.Instance.ns.DeleteFromFriends(friend_id + 2, tcs));
         await tcs.Task;
         DataManager.Instance.TriggerFriendsUpdate();
     }

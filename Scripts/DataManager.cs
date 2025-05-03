@@ -1,38 +1,47 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 public class DataManager : MonoBehaviour
 {
     public static DataManager Instance { get; private set; }
     public NetworkScript ns;
+    public AudioManager am;
     public string token;
-    
+
     public int player_id;
     public string username;
+    public string player_mail;
     public int player_avatar_id;
     public int player_hp;
     public int player_money;
     public Sprite[] avatars;
+    public List<Buster> players_busters;
 
     public string json_levels;
     public JsonDataList friends_array;
     public JsonDataList requested_friends_array;
     public JsonDataList players_no_friends_array;
     public JsonLevelDataList levels_array;
+    public List<Buster> busters_on_level;
     public int current_level;
     public int current_score;
+    public DateTime first_lose_time;
 
     public bool isReturnedFromLevel = false;
+    public bool isExitedFromLevel = false;
 
     // Events
 
-    public static event Action OnPlayerDataUpdated;
+    public static event Action OnHPDataUpdate;
+    public static event Action OnPlayerDataUpdate;
     public static event Action OnFriendsListUpdate;
 
     void Awake()
     {
         ns = this.GetComponent<NetworkScript>();
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        Screen.orientation = ScreenOrientation.Portrait;
 
         if (Instance == null)
         {
@@ -43,15 +52,26 @@ public class DataManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+    }
+
+    void Start()
+    {
+        am.LoadVolumeSettings(); // теперь всё сработает корректно
     }
     public void TriggerPlayerDataUpdated()
     {
-        OnPlayerDataUpdated?.Invoke();
+        OnPlayerDataUpdate?.Invoke();
     }
-    
+
     public void TriggerFriendsUpdate()
     {
         OnFriendsListUpdate?.Invoke();
+    }
+
+    public void TriggerHPUpdate()
+    {
+        OnHPDataUpdate?.Invoke();
     }
 
     public async Task UpdateAccountDataFromServer(NetworkScript ns)
@@ -62,7 +82,7 @@ public class DataManager : MonoBehaviour
 
         if (tcs.Task.Result)
         {
-            OnPlayerDataUpdated?.Invoke();
+            OnPlayerDataUpdate?.Invoke();
         }
         else
         {

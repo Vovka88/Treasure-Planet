@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6216066938456728450}
   - component: {fileID: 2780325090676882616}
   - component: {fileID: 2653669670700258026}
-  - component: {fileID: 5559508761351347401}
   - component: {fileID: -1613440705464965942}
   m_Layer: 5
   m_Name: Cell
@@ -92,22 +91,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rect: {fileID: 2488317707714912824}
   image: {fileID: 2780325090676882616}
-  defaultImage: {fileID: 2780325090676882616}
-  bombImage: {fileID: 2780325090676882616}
-  spliterImage: {fileID: 2780325090676882616}
   tableController: {fileID: 0}
---- !u!114 &5559508761351347401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7995887658987761318}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44ef466c3c83fb845b83ae037049c01a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  particles: {fileID: 0}
 --- !u!114 &-1613440705464965942
 MonoBehaviour:
   m_ObjectHideFlags: 0

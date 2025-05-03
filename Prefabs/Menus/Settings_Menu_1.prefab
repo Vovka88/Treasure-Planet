@@ -131,6 +131,18 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
+        m_CallState: 0
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!1 &914486369484386430
 GameObject:
@@ -267,6 +279,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1006261467364490262
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,6 +417,18 @@ MonoBehaviour:
       - m_Target: {fileID: -3379194399665793605}
         m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
         m_MethodName: OpenMenu
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -564,6 +600,7 @@ GameObject:
   - component: {fileID: 93501487482470233}
   - component: {fileID: 7684702078573632467}
   - component: {fileID: 6828195897143203147}
+  - component: {fileID: 3770830475515262158}
   m_Layer: 5
   m_Name: btn_sound
   m_TagString: Untagged
@@ -671,7 +708,34 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7684702078573632467}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3770830475515262158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2156463734112328377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 128c3d77bfb8c0a49a04f9f24c28713d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioType: 1
+  onSprite: {fileID: -1481657294184437779, guid: de2d633af9a95844db316becc09c8ccc, type: 3}
+  offSprite: {fileID: 8383246991108578977, guid: 5b57c7ff19f33144a8ce9343fd91049f, type: 3}
 --- !u!1 &2387722293065932465
 GameObject:
   m_ObjectHideFlags: 0
@@ -778,8 +842,8 @@ RectTransform:
   - {fileID: 5761472359960955502}
   - {fileID: 4183486545046424222}
   - {fileID: 3555393271123660669}
-  - {fileID: 7634654789966743576}
   - {fileID: 8328634050254683106}
+  - {fileID: 7634654789966743576}
   - {fileID: 1394667889122507214}
   - {fileID: 1410212444468326854}
   - {fileID: 1445087920458108719}
@@ -913,7 +977,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7343832880538278855}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3210851085061096007
 GameObject:
   m_ObjectHideFlags: 0
@@ -1319,7 +1395,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 594885883987922839}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: AccountDelete
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4017046920984631369
 GameObject:
   m_ObjectHideFlags: 0
@@ -1514,7 +1614,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8045188823960920626}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6082176911280370014
 GameObject:
   m_ObjectHideFlags: 0
@@ -1635,7 +1747,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1789009648755070993}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: OpenMenu
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6417201060665677020
 GameObject:
   m_ObjectHideFlags: 0
@@ -1755,7 +1891,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5876175009870776305}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7709433150771901914
 GameObject:
   m_ObjectHideFlags: 0
@@ -1983,13 +2131,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d10e1a8e1e892c4c8f714d80f7bb7b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  exit_btn: {fileID: 5945904113575344821}
   back_menu: {fileID: 0}
   this_menu: {fileID: 0}
   next_menu:
   - {fileID: 2605973978738590990, guid: f8b96b158f0294b468153782efbda0c9, type: 3}
   - {fileID: 3893832892963491806, guid: 7eaa069172c52294b94ddf3e5bf0ffdf, type: 3}
+  - {fileID: 4751705237591181443, guid: 366b82cd1bd8e934b8bd14b92b1f8823, type: 3}
   beforeMenu: {fileID: 0}
   nextMenu: {fileID: 0}
+  instantiate_menu_position: {fileID: 0}
+  end_animation_menu_position: {fileID: 0}
 --- !u!1 &8553331625061698908
 GameObject:
   m_ObjectHideFlags: 0
@@ -2274,6 +2426,7 @@ GameObject:
   - component: {fileID: 1433855404228641866}
   - component: {fileID: 7153188916344768295}
   - component: {fileID: 3650061736745053445}
+  - component: {fileID: 3743441938516675053}
   m_Layer: 5
   m_Name: btn_music
   m_TagString: Untagged
@@ -2381,7 +2534,34 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7153188916344768295}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: -3379194399665793605}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: PlayClickSound
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3743441938516675053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8988598590796070476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 128c3d77bfb8c0a49a04f9f24c28713d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioType: 0
+  onSprite: {fileID: 5925490718074647571, guid: a56816934cbde364999983df2a44fe38, type: 3}
+  offSprite: {fileID: -4671508421012547215, guid: 554f7437bb7691a43bfdcc20d81748d7, type: 3}
 --- !u!1 &9012995381073351651
 GameObject:
   m_ObjectHideFlags: 0

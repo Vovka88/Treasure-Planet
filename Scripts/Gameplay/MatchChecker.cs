@@ -31,18 +31,17 @@ public class MatchChecker : MonoBehaviour
                         matchedTiles.Add(table[x, y]);
                         matchedTiles.Add(table[x + 1, y]);
                         matchedTiles.Add(table[x + 2, y]);
-                        if (table[x, y] != null && table[x + 3, y] != null)
+                        if (x + 3 < tableController.table_width &&
+                                table[x + 3, y] != null &&
+                                table[x, y].cell_Type == table[x + 3, y].cell_Type)
                         {
-                            if (x + 3 < tableController.table_width && table[x, y].cell_Type == table[x + 3, y].cell_Type)
+                            matchedTiles.Add(table[x + 3, y]);
+
+                            if (x + 4 < tableController.table_width &&
+                                table[x + 4, y] != null &&
+                                table[x, y].cell_Type == table[x + 4, y].cell_Type)
                             {
-                                matchedTiles.Add(table[x + 3, y]);
-                                if (table[x, y] != null && table[x + 4, y] != null)
-                                {
-                                    if (x + 4 < tableController.table_width && table[x, y].cell_Type == table[x + 4, y].cell_Type)
-                                    {
-                                        matchedTiles.Add(table[x + 4, y]);
-                                    }
-                                }
+                                matchedTiles.Add(table[x + 4, y]);
                             }
                         }
                     }
@@ -114,7 +113,7 @@ public class MatchChecker : MonoBehaviour
 
     public List<CellData> MarkSpecialTiles(Point movedFrom, Point movedTo)
     {
-        var allMatches = new List<List<CellData>>();
+        var allMatches = new List<(List<CellData> line, bool isHorizontal)>();
 
         // Горизонтальные линии
         for (int y = 0; y < tableController.table_height; y++)
@@ -135,11 +134,13 @@ public class MatchChecker : MonoBehaviour
                         x++;
                     }
 
-                    if (line.Count >= 4)
-                        allMatches.Add(line);
+                    if (line.Count >= 3)
+                        allMatches.Add((line, true)); // горизонтальная линия
                 }
                 else
+                {
                     x++;
+                }
             }
         }
 
@@ -162,18 +163,20 @@ public class MatchChecker : MonoBehaviour
                         y++;
                     }
 
-                    if (line.Count >= 4)
-                        allMatches.Add(line);
+                    if (line.Count >= 3)
+                        allMatches.Add((line, false)); // вертикальная линия
                 }
                 else
+                {
                     y++;
+                }
             }
         }
 
         // Обработка всех комбо
         List<CellData> specialPoint = new List<CellData>();
 
-        foreach (var match in allMatches)
+        foreach (var (match, isHorizontal) in allMatches)
         {
             // Ищем среди match ту, что равна movedFrom или movedTo
             CellData special = match.FirstOrDefault(cell =>
@@ -187,12 +190,14 @@ public class MatchChecker : MonoBehaviour
             if (match.Count >= 5)
             {
                 special.cell_Version = CellData.Cell_Version.Ultra_Bomb;
-                // special.cell_Type = CellData.Cell_Type.Ultra;
                 specialPoint.Add(special);
             }
             else if (match.Count >= 4)
             {
-                special.cell_Version = CellData.Cell_Version.Horizontal_Spliter;
+                special.cell_Version = isHorizontal
+                    ? CellData.Cell_Version.Horizontal_Spliter
+                    : CellData.Cell_Version.Vertical_Spliter;
+
                 specialPoint.Add(special);
             }
         }
@@ -357,11 +362,21 @@ public class MatchChecker : MonoBehaviour
         {
             for (int j = -1; j <= 1; j++)
             {
-                if (table[x + i, y + j] == null || table[x + i, y + j].cell_Type == CellData.Cell_Type.None) continue;
-                matchedTiles.Add(table[x + i, y + j]);
+                int newX = x + i;
+                int newY = y + j;
+
+                // Проверяем, чтобы не выйти за границы массива
+                if (newX < 0 || newX >= tableController.table_width || newY < 0 || newY >= tableController.table_height)
+                    continue;
+
+                if (table[newX, newY] == null || table[newX, newY].cell_Type == CellData.Cell_Type.None)
+                    continue;
+
+                matchedTiles.Add(table[newX, newY]);
             }
         }
     }
+
     // Метод активування Сплітеру
     // MODE = TRUE  - Vertical
     // MODE = FALSE - Horizontal
@@ -385,7 +400,7 @@ public class MatchChecker : MonoBehaviour
         }
     }
 
-    public void UltraBombBreaker(CellData.Cell_Type type)
+    public void UltraBombBreaker(int x, int y, CellData.Cell_Type type)
     {
         // if (type > 0 && (type < CellData.Cell_Type.Cloud || type == CellData.Cell_Type.Ultra))
         // {
@@ -403,12 +418,83 @@ public class MatchChecker : MonoBehaviour
             // if (item.cell_Type == type) matchedTiles.Add(item);
             if (item.cell_Type == type) tilesToDelete.Add(item);
         }
+        tilesToDelete.Add(table[x, y]);
         // }
         // }
     }
 
+    public void DoubleSplitterBreaker(int x, int y)
+    {
+        for (int x1 = 0; x1 < tableController.table_width; x1++)
+        {
+            if (IsInBounds(x1, y) && table[x1, y].cell_Type != CellData.Cell_Type.None && table[x1, y].cell_Type != CellData.Cell_Type.Cloud)
+                tilesToDelete.Add(table[x1, y]);
+        }
+
+        for (int y1 = 0; y1 < tableController.table_height; y1++)
+        {
+            if (IsInBounds(x, y1) && table[x, y1].cell_Type != CellData.Cell_Type.None && table[x, y1].cell_Type != CellData.Cell_Type.Cloud)
+                tilesToDelete.Add(table[x, y1]);
+        }
+    }
+
+    public void DoubleBombBreaker(int x, int y)
+    {
+        for (int i = -2; i <= 2; i++)
+        {
+            for (int j = -2; j <= 2; j++)
+            {
+                int newX = x + i;
+                int newY = y + j;
+
+                if (IsInBounds(newX, newY) && table[newX, newY].cell_Type != CellData.Cell_Type.None)
+                {
+                    matchedTiles.Add(table[newX, newY]);
+                }
+            }
+        }
+    }
+
+    public void SplitterBombBreaker(int x, int y)
+    {
+        for (int x1 = 0; x1 < tableController.table_width; x1++)
+        {
+            for (int y1 = y - 1; y1 <= y + 1; y1++)
+            {
+                if (IsInBounds(x1, y1) && table[x1, y1].cell_Type != CellData.Cell_Type.None && table[x1, y1].cell_Type != CellData.Cell_Type.Cloud)
+                    tilesToDelete.Add(table[x1, y1]);
+            }
+        }
+
+        for (int y2 = 0; y2 < tableController.table_height; y2++)
+        {
+            for (int x2 = x - 1; x2 <= x + 1; x2++)
+            {
+                if (IsInBounds(x2, y2) && table[x2, y2].cell_Type != CellData.Cell_Type.None && table[x2, y2].cell_Type != CellData.Cell_Type.Cloud)
+                    tilesToDelete.Add(table[x2, y2]);
+            }
+        }
+    }
+
+    public void UltraUltraBombBreaker()
+    {
+        for (int x1 = 0; x1 < tableController.table_width; x1++)
+        {
+            for (int y1 = 0; y1 < tableController.table_height; y1++)
+            {
+                if (table[x1, y1].cell_Type != CellData.Cell_Type.None && table[x1, y1].cell_Type != CellData.Cell_Type.Cloud)
+                    tilesToDelete.Add(table[x1, y1]);
+            }
+        }
+    }
 
 
+
+
+    public bool IsInBounds(int x, int y)
+    {
+        return x >= 0 && x < tableController.table_width && y >= 0 && y < tableController.table_height;
+    }
     public List<CellData> GetMatchedTiles() => matchedTiles;
     public List<CellData> GetTilesToDelete()
     {

@@ -122,7 +122,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7208725877244086827}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3551110136257687305}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: OpenMenu
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &501058687685354081
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +147,7 @@ GameObject:
   - component: {fileID: 3083862793772397325}
   - component: {fileID: 6788749083325371614}
   - component: {fileID: 7421518177220116543}
+  - component: {fileID: 592872689122369458}
   m_Layer: 5
   m_Name: btn_sound
   m_TagString: Untagged
@@ -243,6 +256,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &592872689122369458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501058687685354081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 128c3d77bfb8c0a49a04f9f24c28713d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioType: 1
+  onSprite: {fileID: -1481657294184437779, guid: de2d633af9a95844db316becc09c8ccc, type: 3}
+  offSprite: {fileID: 8383246991108578977, guid: 5b57c7ff19f33144a8ce9343fd91049f, type: 3}
 --- !u!1 &1453165930636727449
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,7 +414,7 @@ RectTransform:
   m_GameObject: {fileID: 2603300830591239535}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 781093229146004236}
@@ -449,9 +477,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d10e1a8e1e892c4c8f714d80f7bb7b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  exit_btn: {fileID: 4748193307266231469}
   back_menu: {fileID: 0}
   this_menu: {fileID: 0}
-  next_menu: {fileID: 0}
+  next_menu:
+  - {fileID: 3893832892963491806, guid: 7eaa069172c52294b94ddf3e5bf0ffdf, type: 3}
+  - {fileID: 2356751904646979381, guid: 4db33de57bc535240b1456a8587119cf, type: 3}
   beforeMenu: {fileID: 0}
   nextMenu: {fileID: 0}
 --- !u!1 &2818356390886418222
@@ -1040,7 +1071,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1642942482160562465}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3551110136257687305}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: CloseMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8057884569887889681
 GameObject:
   m_ObjectHideFlags: 0
@@ -1189,6 +1232,7 @@ GameObject:
   - component: {fileID: 5905067801883305317}
   - component: {fileID: 8952444049517227305}
   - component: {fileID: 1886234885416381519}
+  - component: {fileID: 6326381213790756207}
   m_Layer: 5
   m_Name: btn_music
   m_TagString: Untagged
@@ -1297,6 +1341,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6326381213790756207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8849086661526214156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 128c3d77bfb8c0a49a04f9f24c28713d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioType: 0
+  onSprite: {fileID: 5925490718074647571, guid: a56816934cbde364999983df2a44fe38, type: 3}
+  offSprite: {fileID: -4671508421012547215, guid: 554f7437bb7691a43bfdcc20d81748d7, type: 3}
 --- !u!1 &9121776463936877992
 GameObject:
   m_ObjectHideFlags: 0
@@ -1417,4 +1476,16 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8307349178210766228}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3551110136257687305}
+        m_TargetAssemblyTypeName: SettingsMenu, Assembly-CSharp
+        m_MethodName: OpenMenu
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

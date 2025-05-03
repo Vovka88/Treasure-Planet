@@ -8,24 +8,7 @@ using UnityEngine.Networking;
 
 public class NetworkScript : MonoBehaviour
 {
-    //     public static NetworkScript Instance { get; private set; }
     private string apiUrlBase = "http://127.0.0.1:8000/api"; // Используем API-роут
-
-    // void Awake()
-    // {
-    //     Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
-    //     if (Instance == null)
-    //     {
-    //         Instance = this;
-    //         DontDestroyOnLoad(gameObject);
-    //     }
-    //     else
-    //     {
-    //         Destroy(gameObject);
-    //     }
-    // }
-
 
     ///----------------------------
     /// PLAYER CODE PART
@@ -52,6 +35,7 @@ public class NetworkScript : MonoBehaviour
 
                 // Сохранение токена
                 DataManager.Instance.players_no_friends_array = data;
+
                 tcs.SetResult(true);
             }
             else
@@ -123,10 +107,31 @@ public class NetworkScript : MonoBehaviour
                 DataManager.Instance.token = token;
                 DataManager.Instance.player_id = data.player_id;
                 DataManager.Instance.username = data.username;
-                DataManager.Instance.player_avatar_id = data.player_avatar_id;
+                DataManager.Instance.player_avatar_id = data.avatar_id;
                 DataManager.Instance.player_id = data.player_id;
                 DataManager.Instance.player_hp = data.player_hp;
                 DataManager.Instance.player_money = data.player_money;
+
+                Debug.Log($"Lose time string: {data.lose_time}");
+                DateTime parsedLoseTime = new DateTime();
+                if (data.lose_time.Length > 0)
+                {   
+                    parsedLoseTime = DateTime.ParseExact(
+                        data.lose_time,
+                        "yyyy-MM-dd HH:mm:ss",
+                        System.Globalization.CultureInfo.InvariantCulture
+                    );
+                }
+                else
+                {
+                    parsedLoseTime = DateTime.Now;
+                }
+
+                // Сохраняем
+                DataManager.Instance.first_lose_time = parsedLoseTime;
+
+                // Debug.Log(json);
+                // Debug.Log(data.lose_time);
                 tcs.SetResult(true);
             }
             else
@@ -235,7 +240,7 @@ public class NetworkScript : MonoBehaviour
     {
         string logoutUrl = $"{apiUrlBase}/deleteUser"; ;
 
-        string jsonData = "{\"player_id\": \"" + DataManager.Instance.player_id + "\"}";
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + "}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
         using (UnityWebRequest request = new UnityWebRequest(logoutUrl, "POST"))
@@ -271,6 +276,50 @@ public class NetworkScript : MonoBehaviour
         }
 
         return true;
+    }
+
+    // Сохранение хп игрока (не написано)
+    public IEnumerator SaveHp(int hp, bool isItFirst)
+    {
+        Debug.Log("SaveHp method entered");
+        string scoreUrl = $"{apiUrlBase}/updateplayerhp";
+        string jsonData = "";
+        if (isItFirst)
+        {
+            jsonData = "{\"player_id\": " + DataManager.Instance.player_id +
+                                ", \"hp\": " + hp +
+                                 ", \"lose_time\": \"" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "\"}";
+        }
+        else
+        {
+            jsonData = "{\"player_id\": " + DataManager.Instance.player_id +
+                                ", \"hp\": " + hp + "}";
+        }
+
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        Debug.Log("Starting Save");
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            // request.timeout = 10;
+
+            yield return request.SendWebRequest();
+
+            // Debug.Log("Ending Save");
+            // if (request.result == UnityWebRequest.Result.Success)
+            // {
+            //     Debug.Log("Сохранение прошло успешно");
+            //     tcs.SetResult(true);
+            // }
+            // else
+            // {
+            //     Debug.LogError("Ошибка сохранения " + request.error);
+            //     tcs.SetResult(false);
+            // }
+        }
     }
 
     ///----------------------------
@@ -367,7 +416,7 @@ public class NetworkScript : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                string json = request.downloadHandler.text;   
+                string json = request.downloadHandler.text;
                 Debug.Log("Данные Сохранены: " + json);
                 tcs.SetResult(true);
             }
@@ -378,6 +427,7 @@ public class NetworkScript : MonoBehaviour
             }
         }
     }
+
 
     ///----------------------------
     /// FRIENDS CODE PART
@@ -455,7 +505,7 @@ public class NetworkScript : MonoBehaviour
         string scoreUrl = $"{apiUrlBase}/sendfriendinvite";
 
         string jsonData = "{\"player_id\": " + DataManager.Instance.player_id +
-                            ", \"friend_id\": " + friend_id + "}";
+                            ", \"friend_id\": " + (friend_id + 1) + "}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
         using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
@@ -519,7 +569,10 @@ public class NetworkScript : MonoBehaviour
     {
         string scoreUrl = $"{apiUrlBase}/declinefriendinvite";
 
-        string jsonData = "{\"player_id\": " + friend_id +
+        Debug.Log(DataManager.Instance.player_id);
+        Debug.Log(friend_id + 1);
+
+        string jsonData = "{\"player_id\": " + (friend_id + 1) +
                             ", \"friend_id\": " + DataManager.Instance.player_id + "}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
@@ -551,8 +604,11 @@ public class NetworkScript : MonoBehaviour
         Debug.Log("Starting friend deleting");
         string scoreUrl = $"{apiUrlBase}/deletefriend";
 
+        Debug.Log(DataManager.Instance.player_id);
+        Debug.Log(friend_id);
+
         string jsonData = "{\"player_id\": " + DataManager.Instance.player_id +
-                            ", \"friend_id\": " + friend_id + "}";
+                            ", \"friend_id\": " + (friend_id) + "}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
         Debug.LogError(DataManager.Instance.player_id);
         Debug.LogError(friend_id);

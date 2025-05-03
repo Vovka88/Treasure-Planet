@@ -8,6 +8,7 @@ public class CellFactory : MonoBehaviour
     [SerializeField] private Cell _cellPrefab;
     [SerializeField] public Vector2 _padding;
     public Cell[,] cells;
+    [SerializeField] private GameObject particle;
 
     public void InstantiateTable(TableController tableController)
     {
@@ -30,11 +31,11 @@ public class CellFactory : MonoBehaviour
                 if (cellType > CellData.Cell_Type.None && cellType < CellData.Cell_Type.Cloud)
                 {
                     int cellIndex = (int)(cellType - 1);
-                    cell.Initialize(cellData, tableController.defaultColors[cellIndex]);
+                    cell.Initialize(cellData, tableController.defaultColors[cellIndex], particle);
                 }
                 else if (cellType >= CellData.Cell_Type.Cloud)
                 {
-                    cell.Initialize(cellData, tableController.defaultColors[(int)(cellType - 1)]);
+                    cell.Initialize(cellData, tableController.defaultColors[(int)(cellType - 1)], particle);
                 }
                 else
                     cell.Initialize(cellData);
@@ -60,7 +61,7 @@ public class CellFactory : MonoBehaviour
                     cell.tableController = tableController;
                     cell.rect.anchoredPosition = GetPositionWithPadding(cellData.point);
                     int cellIndex = (int)(cellData.cell_Type - 1);
-                    cell.Initialize(cellData, tableController.defaultColors[cellIndex]);
+                    cell.Initialize(cellData, tableController.defaultColors[cellIndex], particle);
                     cell.UpdateName();
 
                     cells[x, y] = cell;

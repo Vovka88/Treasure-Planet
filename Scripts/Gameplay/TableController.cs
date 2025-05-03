@@ -5,8 +5,9 @@ using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 using System.Threading.Tasks;
-using System.IO.Compression;
 using UnityEngine.SceneManagement;
+using UnityEngine.Assertions.Must;
+using Unity.Collections;
 
 [RequireComponent(typeof(CellFactory), typeof(MatchChecker))]
 public class TableController : MonoBehaviour
@@ -28,10 +29,8 @@ public class TableController : MonoBehaviour
     public int table_width;
     public int table_height;
 
-    private Point swipeStart;
-    private Point swipeDirection;
     private bool isSwapping = false;
-    private int turns = 25;
+    public int turns = 25;
     [SerializeField] private int scoreForTile = 100;
     [SerializeField] public int[] scoreForEnd = new int[3];
     [SerializeField] public Sprite ultraBombSprite;
@@ -42,11 +41,20 @@ public class TableController : MonoBehaviour
     private bool swipeDetected = false;
     [SerializeField] private int level_id;
 
+    private Item item_hammer = new Item(3, Item.ItemType.Hammer);
+    private Item item_galaxy = new Item(3, Item.ItemType.Galaxy);
+    private Item item_ufo = new Item(3, Item.ItemType.UFO);
+    private Item item_meteorites = new Item(3, Item.ItemType.Meteorites);
 
 
     // EVENTS
 
     public event Action<int> onTurnsChanged;
+    public event Action<int> onScoreChanged;
+    public event Action<Item> activateItem;
+
+
+
 
     private void Awake()
     {
@@ -54,6 +62,8 @@ public class TableController : MonoBehaviour
         matchChecker = GetComponent<MatchChecker>();
 
         Input.simulateMouseWithTouches = false;
+
+        activateItem += ActivateItem;
 
         Application.targetFrameRate = 120;
         Time.fixedDeltaTime = 1f / 120f;
@@ -64,6 +74,30 @@ public class TableController : MonoBehaviour
     {
         InitializeTable();
         cellFactory.InstantiateTable(this);
+
+        // var busters = DataManager.Instance.busters_on_level;
+
+        List<CellData> bustedTiles = new List<CellData>();
+        Debug.Log(DataManager.Instance.busters_on_level.Count);
+
+        foreach (var buster in DataManager.Instance.busters_on_level)
+        {
+            int x, y;
+            do
+            {
+                x = UnityEngine.Random.Range(0, table_width);
+                y = UnityEngine.Random.Range(0, table_height);
+            } while (table[x, y].cell_Type == CellData.Cell_Type.None ||
+                     table[x, y].cell_Type >= CellData.Cell_Type.Cloud);
+
+            bustedTiles.Add(ApplyBuster(x, y, buster.type));
+            Destroy(cellFactory.cells[x, y].gameObject);
+            Debug.Log("Bust Applied!");
+        }
+        Debug.Log("All Busters Applied");
+
+        DataManager.Instance.busters_on_level.Clear();
+        cellFactory.CreateSpecialVersionsFromCellData(bustedTiles);
         StartCoroutine(GameLoop());
     }
 
@@ -100,20 +134,62 @@ public class TableController : MonoBehaviour
         if (isSwapping) yield break;
         isSwapping = true;
 
-        // if (table[a.x, a.y].cell_Version == CellData.Cell_Version.Ultra_Bomb)
-        // {
-        //     matchChecker.UltraBombBreaker(table[b.x, b.y].cell_Type);
-        // }
-        // else if (table[b.x, b.y].cell_Version == CellData.Cell_Version.Ultra_Bomb)
-        // {
-        //     matchChecker.UltraBombBreaker(table[a.x, a.y].cell_Type);
-        // }
-        // else 
         if (table[a.x, a.y].cell_Type < CellData.Cell_Type.Cloud &&
             table[b.x, b.y].cell_Type < CellData.Cell_Type.Cloud &&
             table[a.x, a.y].cell_Type > CellData.Cell_Type.None &&
             table[b.x, b.y].cell_Type > CellData.Cell_Type.None)
         {
+            if (table[a.x, a.y].cell_Version != CellData.Cell_Version.Default || table[b.x, b.y].cell_Version != CellData.Cell_Version.Default)
+            {
+                // 🔥 Здесь происходит спецкомбинация
+                Debug.Log("💥 Special combination!");
+
+                // Просто пример обработки, можно кастомизировать
+                SwapCells(a, b);
+                yield return new WaitForSeconds(0.2f);
+
+                // Пример: если одна из фишек — бомба
+                if ((table[a.x, a.y].cell_Version == CellData.Cell_Version.Horizontal_Spliter && table[b.x, b.y].cell_Version == CellData.Cell_Version.Vertical_Spliter) ||
+                (table[a.x, a.y].cell_Version == CellData.Cell_Version.Horizontal_Spliter && table[b.x, b.y].cell_Version == CellData.Cell_Version.Horizontal_Spliter) ||
+                (table[a.x, a.y].cell_Version == CellData.Cell_Version.Vertical_Spliter && table[b.x, b.y].cell_Version == CellData.Cell_Version.Vertical_Spliter) ||
+                    (table[a.x, a.y].cell_Version == CellData.Cell_Version.Vertical_Spliter && table[b.x, b.y].cell_Version == CellData.Cell_Version.Horizontal_Spliter))
+                {
+                    matchChecker.DoubleSplitterBreaker(a.x, a.y);
+                    yield return StartCoroutine(DestroyAllMatches()); // дополнительный матч
+                }
+                else if ((table[a.x, a.y].cell_Version == CellData.Cell_Version.Horizontal_Spliter && table[b.x, b.y].cell_Version == CellData.Cell_Version.Bomb) ||
+                (table[a.x, a.y].cell_Version == CellData.Cell_Version.Bomb && table[b.x, b.y].cell_Version == CellData.Cell_Version.Horizontal_Spliter) ||
+                (table[a.x, a.y].cell_Version == CellData.Cell_Version.Bomb && table[b.x, b.y].cell_Version == CellData.Cell_Version.Vertical_Spliter) ||
+                    (table[a.x, a.y].cell_Version == CellData.Cell_Version.Vertical_Spliter && table[b.x, b.y].cell_Version == CellData.Cell_Version.Bomb))
+                {
+                    matchChecker.SplitterBombBreaker(a.x, a.y);
+                    yield return StartCoroutine(DestroyAllMatches());
+                }
+                else if (table[a.x, a.y].cell_Version == CellData.Cell_Version.Bomb && table[b.x, b.y].cell_Version == CellData.Cell_Version.Bomb)
+                {
+                    matchChecker.DoubleBombBreaker(a.x, a.y);
+                    yield return StartCoroutine(DestroyAllMatches());
+                }
+                else if (table[a.x, a.y].cell_Version == CellData.Cell_Version.Default && table[b.x, b.y].cell_Version == CellData.Cell_Version.Ultra_Bomb)
+                {
+                    matchChecker.UltraBombBreaker(b.x, b.y, table[a.x, a.y].cell_Type);
+                    yield return StartCoroutine(DestroyAllMatches());
+                }
+                else if (table[b.x, b.y].cell_Version == CellData.Cell_Version.Default && table[a.x, a.y].cell_Version == CellData.Cell_Version.Ultra_Bomb)
+                {
+                    matchChecker.UltraBombBreaker(a.x, a.y, table[b.x, b.y].cell_Type);
+                    yield return StartCoroutine(DestroyAllMatches());
+                }
+                else if (table[b.x, b.y].cell_Version == CellData.Cell_Version.Ultra_Bomb && table[a.x, a.y].cell_Version == CellData.Cell_Version.Ultra_Bomb)
+                {
+                    matchChecker.UltraUltraBombBreaker();
+                    yield return StartCoroutine(DestroyAllMatches());
+                }
+
+                isSwapping = false;
+                yield break;
+            }
+
             SwapCells(a, b);
             yield return new WaitForSeconds(0.3f); // wait animation
 
@@ -219,13 +295,16 @@ public class TableController : MonoBehaviour
 
                 if (cellFactory.cells[item.point.x, item.point.y] != null)
                 {
+                    cellFactory.cells[item.point.x, item.point.y].InstantiateParticles();
                     Destroy(cellFactory.cells[item.point.x, item.point.y].gameObject);
                     cellFactory.cells[item.point.x, item.point.y] = null;
+                    DataManager.Instance.am.PlayDestroySound();
                 }
             }
 
             cellFactory.CreateSpecialVersionsFromCellData(protectedPoints);
             DataManager.Instance.current_score += matches.Count * scoreForTile;
+            onScoreChanged.Invoke(DataManager.Instance.current_score);
             // Debug.Log("Current score: " + DataManager.Instance.current_score);
             yield return new WaitForSeconds(0.2f);
             DropCells();
@@ -425,7 +504,7 @@ public class TableController : MonoBehaviour
         for (int i = 0; i < tableLayout.Length; i++)
             if (tableLayout[i].rows[y].row[x])
                 return (CellData.Cell_Type)i;
-        return (CellData.Cell_Type)(UnityEngine.Random.Range(1, 5));
+        return (CellData.Cell_Type)UnityEngine.Random.Range(1, 5);
     }
 
     private async Task SaveLevelData()
@@ -470,6 +549,11 @@ public class TableController : MonoBehaviour
 
             Debug.Log($"Отправляем запрос: score = {score}, stars = {0}, completed = {completed}");
             StartCoroutine(DataManager.Instance.ns.SaveLevelData(level_id, 0, completed, tcs));
+            StartCoroutine(DataManager.Instance.ns.SaveHp(
+                DataManager.Instance.player_hp - 1,
+                DataManager.Instance.player_hp == 5
+            // tcs
+            ));
 
             await tcs.Task.ContinueWith(_ =>
             {
@@ -511,5 +595,37 @@ public class TableController : MonoBehaviour
     {
         Vector2 basePosition = GetBoardPositionFromPoint(point);
         return basePosition + cellFactory._padding;
+    }
+
+
+
+    private CellData ApplyBuster(int x, int y, Buster.BusterType type)
+    {
+        switch (type)
+        {
+            case Buster.BusterType.Bomb:
+                table[x, y].cell_Version = CellData.Cell_Version.Bomb;
+                break;
+            case Buster.BusterType.UltraBomb:
+                table[x, y].cell_Version = CellData.Cell_Version.Ultra_Bomb;
+                break;
+            case Buster.BusterType.Splitter:
+                table[x, y].cell_Version = CellData.Cell_Version.Horizontal_Spliter;
+                break;
+        }
+
+        return table[x, y];
+    }
+
+    private void ActivateItem(Item item)
+    {
+        var matches = matchChecker.GetTilesToDelete();
+        Point p1 = new Point(2, 1);
+        Point p2 = new Point(3, 0);
+        Point p3 = new Point(4, 1);
+        foreach(var point in item.Execute(new Point[] {p1, p2, p3}))
+        {
+            if (table[point.x, point.y].cell_Type > CellData.Cell_Type.None && table[point.x, point.y].cell_Type < CellData.Cell_Type.Cloud) matches.Add(table[point.x, point.y]);
+        }
     }
 }
