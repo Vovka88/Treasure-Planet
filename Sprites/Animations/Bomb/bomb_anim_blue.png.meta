@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      bomb_anim_blue_0: 8191501852292919283
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

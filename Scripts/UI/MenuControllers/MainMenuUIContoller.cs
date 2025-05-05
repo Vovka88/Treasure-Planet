@@ -105,6 +105,7 @@ public class MainMenuUIContoller : MonoBehaviour
         await tcs.Task;
 
         loading_screen.SetActive(false);
+        DataManager.Instance.TriggerHPUpdate();
 
         var levels = JsonUtility.FromJson<JsonLevelDataList>(DataManager.Instance.json_levels);
         levels_data = new List<JsonLevelData>(); // <- Обязательно инициализируем список!

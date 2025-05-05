@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      bomb_anim_orange_0: -6235073756752629567
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

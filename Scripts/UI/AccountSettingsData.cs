@@ -14,7 +14,7 @@ public class AccountSettingsData : MonoBehaviour
 
     public async void UpdateData()
     {
-        // await DataManager.Instance.UpdateAccountDataFromServer(DataManager.Instance.ns);
+        await DataManager.Instance.UpdateAccountDataFromServer(DataManager.Instance.ns);
 
         Debug.Log(DataManager.Instance.avatars[DataManager.Instance.player_avatar_id]);
         Debug.Log(DataManager.Instance.username);

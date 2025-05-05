@@ -306,6 +306,7 @@ public class NetworkScript : MonoBehaviour
             // request.timeout = 10;
 
             yield return request.SendWebRequest();
+            DataManager.Instance.TriggerHPUpdate();
 
             // Debug.Log("Ending Save");
             // if (request.result == UnityWebRequest.Result.Success)
@@ -535,12 +536,12 @@ public class NetworkScript : MonoBehaviour
     {
         string scoreUrl = $"{apiUrlBase}/acceptfriendinvite";
 
-        string jsonData = "{\"player_id\": " + friend_id +
+        string jsonData = "{\"player_id\": " + (friend_id - 2) +
                             ", \"friend_id\": " + DataManager.Instance.player_id + "}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
         Debug.LogError(DataManager.Instance.player_id);
-        Debug.LogError(friend_id);
+        Debug.LogError(friend_id - 2);
 
 
         using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
@@ -795,10 +796,10 @@ public class NetworkScript : MonoBehaviour
     {
         string scoreUrl = $"{apiUrlBase}/heartreceive";
 
-        Debug.Log(DataManager.Instance.player_id);
-        Debug.Log(sender_id + 1);
+        Debug.Log(DataManager.Instance.player_id - 3);
+        Debug.Log(sender_id);
 
-        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + ", \"sender_id\": " + (sender_id + 1) + "}";
+        string jsonData = "{\"player_id\": " + (DataManager.Instance.player_id - 3) + ", \"sender_id\": " + sender_id + "}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
         using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
