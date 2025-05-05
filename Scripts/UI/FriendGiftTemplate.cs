@@ -1,57 +1,32 @@
+using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FriendTemplate : MonoBehaviour
+
+public class FriendGiftTemplate : MonoBehaviour
 {
+    public int id;
+
     [Header("UI Elements")]
-    [SerializeField] private Image background;
     [SerializeField] private Image avatar;
     [SerializeField] private TMP_Text username;
-    [SerializeField] private Button btn_add;
-    [SerializeField] private Button btn_delete;
 
     [Header("Sprites")]
-    [SerializeField] private Sprite[] bg_sprites;
-    [SerializeField] private Sprite[] btn_sprites;
-
-    public enum FriendTemplateType
-    {
-        Request,
-        Player,
-        Friend,
-
-
-        Want,
-        Send,
-        Accept,
-    }
+    [SerializeField] public TMP_Text description;
 
     /// <summary>
     /// Method which instatiates friend in menu | Modes: True - Add / False - Delete
     /// </summary>
-    public void InstantiateFriend(int friend_id, JsonDataList array, FriendTemplateType mode)
-    {
-        username.text = array.players[friend_id].username;
-        avatar.sprite = DataManager.Instance.avatars[array.players[friend_id].avatar_id - 1];
-        background.sprite = bg_sprites[mode < FriendTemplateType.Friend ? 1 : 0];
-        btn_add.GetComponent<Image>().sprite = btn_sprites[mode < FriendTemplateType.Friend ? 1 : 0];
 
-        switch (mode)
-        {
-            case FriendTemplateType.Player:
-                btn_add.onClick.AddListener(() => { AddToFriend(friend_id); });
-                break;
-            case FriendTemplateType.Friend:
-                btn_add.onClick.AddListener(() => { DeleteFromFriend(friend_id); });
-                break;
-            case FriendTemplateType.Request:
-                btn_delete.gameObject.SetActive(true);
-                btn_add.onClick.AddListener(() => { AcceptFriendRequest(friend_id); });
-                btn_delete.onClick.AddListener(() => { DeclineFriendRequest(friend_id); });
-                break;
-        }
+    public void InstantiateFriend(int friend_id, JsonDataList array)
+    {
+        var temp = array.players.ToList().Find(f => f.id == friend_id);
+
+        username.text = temp.username;
+        avatar.sprite = DataManager.Instance.avatars[temp.avatar_id - 1];
+        id = friend_id;
     }
 
     public void AddToFriend(int friend_id)
@@ -104,6 +79,5 @@ public class FriendTemplate : MonoBehaviour
         await tcs.Task;
         DataManager.Instance.TriggerFriendsUpdate();
     }
-
 
 }

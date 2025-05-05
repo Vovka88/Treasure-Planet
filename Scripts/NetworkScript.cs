@@ -108,14 +108,13 @@ public class NetworkScript : MonoBehaviour
                 DataManager.Instance.player_id = data.player_id;
                 DataManager.Instance.username = data.username;
                 DataManager.Instance.player_avatar_id = data.avatar_id;
-                DataManager.Instance.player_id = data.player_id;
                 DataManager.Instance.player_hp = data.player_hp;
                 DataManager.Instance.player_money = data.player_money;
 
                 Debug.Log($"Lose time string: {data.lose_time}");
                 DateTime parsedLoseTime = new DateTime();
                 if (data.lose_time.Length > 0)
-                {   
+                {
                     parsedLoseTime = DateTime.ParseExact(
                         data.lose_time,
                         "yyyy-MM-dd HH:mm:ss",
@@ -439,6 +438,7 @@ public class NetworkScript : MonoBehaviour
     {
         string scoreUrl = $"{apiUrlBase}/getfriends";
 
+
         string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + "}";
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
 
@@ -452,6 +452,7 @@ public class NetworkScript : MonoBehaviour
 
             if (request.result == UnityWebRequest.Result.Success)
             {
+                DataManager.Instance.friends_array = null;
                 string json = request.downloadHandler.text;
                 var data = JsonUtility.FromJson<JsonDataList>(json);
 
@@ -601,7 +602,6 @@ public class NetworkScript : MonoBehaviour
     // Удаление из друзей ( написано)
     public IEnumerator DeleteFromFriends(int friend_id, TaskCompletionSource<bool> tcs)
     {
-        Debug.Log("Starting friend deleting");
         string scoreUrl = $"{apiUrlBase}/deletefriend";
 
         Debug.Log(DataManager.Instance.player_id);
@@ -633,5 +633,252 @@ public class NetworkScript : MonoBehaviour
             }
         }
     }
+
+
+    ///----------------------------
+    /// GIFTS CODE PART
+    ///----------------------------
+
+    // Получение друзей которые просят сердца (написано)
+    public IEnumerator GetWantsForGifts(TaskCompletionSource<bool> tcs)
+    {
+        string scoreUrl = $"{apiUrlBase}/heartsentrequests";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        // Debug.LogError(DataManager.Instance.player_id);
+        // Debug.LogError(friend_id);
+
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string json = request.downloadHandler.text;
+                Debug.Log(json);
+
+                JsonDataList data = new JsonDataList();
+
+                DataManager.Instance.friends_want_gift = null;
+
+                try
+                {
+                    data = JsonUtility.FromJson<JsonDataList>(json);
+                }
+                catch (System.Exception)
+                {
+                    
+                }
+
+                // Сохранение токена
+                DataManager.Instance.friends_want_gift = data;
+
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка получения " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
+
+    // Получение сердец друзей (написано)
+    public IEnumerator GetAcceptionsForGifts(TaskCompletionSource<bool> tcs)
+    {
+        string scoreUrl = $"{apiUrlBase}/heartincoming-hearts";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        // Debug.LogError(DataManager.Instance.player_id);
+        // Debug.LogError(friend_id);
+
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                DataManager.Instance.accept_friends_gift = null;
+                string json = request.downloadHandler.text;
+                Debug.Log(json);
+
+                JsonDataList data = new JsonDataList();
+
+                DataManager.Instance.accept_friends_gift = null;
+
+                try
+                {
+                    data = JsonUtility.FromJson<JsonDataList>(json);
+                }
+                catch (System.Exception)
+                {
+                    
+                }
+
+                // Сохранение токена
+                DataManager.Instance.accept_friends_gift = data;
+
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка получения " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
+
+    // Получение друзей которые просят сердца (написано)
+    public IEnumerator GetFriendsForGifts(TaskCompletionSource<bool> tcs)
+    {
+        string scoreUrl = $"{apiUrlBase}/heartincomingrequests";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                DataManager.Instance.ask_friends_gift = null;
+
+                string json = request.downloadHandler.text;
+                Debug.Log(json);
+                JsonDataList data = new JsonDataList();
+
+                DataManager.Instance.ask_friends_gift = null;
+
+                try
+                {
+                    data = JsonUtility.FromJson<JsonDataList>(json);
+                }
+                catch (System.Exception)
+                {
+                    
+                }
+
+                // Сохранение токена
+                DataManager.Instance.ask_friends_gift = data;
+
+                tcs.SetResult(true);
+            }
+            else
+            {
+                Debug.LogError("Ошибка получения " + request.error);
+                tcs.SetResult(false);
+            }
+        }
+    }
+
+    // Принятие подарка (не написано)
+    public IEnumerator AcceptGift(int sender_id)
+    {
+        string scoreUrl = $"{apiUrlBase}/heartreceive";
+
+        Debug.Log(DataManager.Instance.player_id);
+        Debug.Log(sender_id + 1);
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + ", \"sender_id\": " + (sender_id + 1) + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string json = request.downloadHandler.text;
+                Debug.Log(json);
+                StartCoroutine(SaveHp(DataManager.Instance.player_hp + 1, false));
+            }
+            else
+            {
+                Debug.LogError("Ошибка получения " + request.error);
+            }
+        }
+    }
+
+    // Отправка подарка (не написано)
+    public IEnumerator SendGift(int receiver_id)
+    {
+        string scoreUrl = $"{apiUrlBase}/heartsend";
+
+        Debug.Log(receiver_id);
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + ", \"receiver_id\": " + receiver_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string json = request.downloadHandler.text;
+                Debug.Log(json);
+            }
+            else
+            {
+                Debug.LogError("Ошибка отправки " + request.error);
+            }
+        }
+    }
+
+    // Попросить подарок (не написано)
+    public IEnumerator RequestGift(int receiver_id)
+    {
+        string scoreUrl = $"{apiUrlBase}/heartrequest";
+
+        string jsonData = "{\"player_id\": " + DataManager.Instance.player_id + ", \"receiver_id\": " + receiver_id + "}";
+        byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonData);
+
+        using (UnityWebRequest request = new UnityWebRequest(scoreUrl, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string json = request.downloadHandler.text;
+                Debug.Log(json);
+            }
+            else
+            {
+                Debug.LogError("Ошибка отправки " + request.error);
+            }
+        }
+    }
+
 
 }

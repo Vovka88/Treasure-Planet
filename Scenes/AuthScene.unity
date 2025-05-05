@@ -3704,6 +3704,12 @@ MonoBehaviour:
     players: []
   players_no_friends_array:
     players: []
+  friends_want_gift:
+    players: []
+  accept_friends_gift:
+    players: []
+  ask_friends_gift:
+    players: []
   levels_array:
     levels: []
   busters_on_level: []

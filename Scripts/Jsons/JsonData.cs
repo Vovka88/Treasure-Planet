@@ -4,6 +4,7 @@ using System;
 [System.Serializable]
 public class JsonData{
     public string token;
+    public int id;
     public int player_id;
     public string username;
     public int avatar_id;

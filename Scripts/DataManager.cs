@@ -19,9 +19,15 @@ public class DataManager : MonoBehaviour
     public List<Buster> players_busters;
 
     public string json_levels;
+
     public JsonDataList friends_array;
     public JsonDataList requested_friends_array;
     public JsonDataList players_no_friends_array;
+    
+    public JsonDataList friends_want_gift;
+    public JsonDataList accept_friends_gift;
+    public JsonDataList ask_friends_gift;
+    
     public JsonLevelDataList levels_array;
     public List<Buster> busters_on_level;
     public int current_level;
@@ -36,6 +42,7 @@ public class DataManager : MonoBehaviour
     public static event Action OnHPDataUpdate;
     public static event Action OnPlayerDataUpdate;
     public static event Action OnFriendsListUpdate;
+    public static event Action OnGiftsListUpdate;
 
     void Awake()
     {
@@ -62,6 +69,10 @@ public class DataManager : MonoBehaviour
     public void TriggerPlayerDataUpdated()
     {
         OnPlayerDataUpdate?.Invoke();
+    }
+    public void TriggerGiftsDataUpdated()
+    {
+        OnGiftsListUpdate?.Invoke();
     }
 
     public void TriggerFriendsUpdate()
@@ -106,6 +117,24 @@ public class DataManager : MonoBehaviour
     {
         TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
         ns.StartCoroutine(ns.GetUsers(tcs)); // ⚠️ Пример: ты должен реализовать этот метод в NetworkScript
+        await tcs.Task;
+    }
+    public async Task UpdateFriendsGiftsDataFromServer(NetworkScript ns)
+    {
+        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+        ns.StartCoroutine(ns.GetFriendsForGifts(tcs)); // ⚠️ Пример: ты должен реализовать этот метод в NetworkScript
+        await tcs.Task;
+    }
+    public async Task UpdateAcceptionsofGiftsDataFromServer(NetworkScript ns)
+    {
+        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+        ns.StartCoroutine(ns.GetAcceptionsForGifts(tcs)); // ⚠️ Пример: ты должен реализовать этот метод в NetworkScript
+        await tcs.Task;
+    }
+    public async Task UpdateWantsGiftsFromServer(NetworkScript ns)
+    {
+        TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+        ns.StartCoroutine(ns.GetWantsForGifts(tcs)); // ⚠️ Пример: ты должен реализовать этот метод в NetworkScript
         await tcs.Task;
     }
 

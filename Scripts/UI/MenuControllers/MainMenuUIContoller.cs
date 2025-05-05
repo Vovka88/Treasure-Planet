@@ -55,6 +55,7 @@ public class MainMenuUIContoller : MonoBehaviour
     [Header("SECONDARY MENUS")]
     [SerializeField] private GameObject profile_menu;
     [SerializeField] private GameObject end_level_menu;
+    [SerializeField] private GameObject mail_menu;
 
     
 
@@ -301,6 +302,24 @@ public class MainMenuUIContoller : MonoBehaviour
         Invoke(nameof(HideProfileMenu), 0.6f);
     }
 
+    public void OpenMail()
+    {
+        DataManager.Instance.TriggerGiftsDataUpdated();
+        blur.SetActive(true);
+        mail_menu.SetActive(true);
+        // profile_menu.transform.DOJump(menu_position_end.position, 10, 1, 1);
+        mail_menu.transform.DOMoveY(menu_position_end.position.y, 0.5f);
+    }
+
+    public void CloseMail()
+    {
+        DataManager.Instance.TriggerGiftsDataUpdated();
+        blur.SetActive(false);
+        // profile_menu.transform.DOJump(menu_position_start.position, 10, 1, 1);
+        mail_menu.transform.DOMoveY(menu_position_start.position.y, 0.5f);
+        Invoke(nameof(HideProfileMenu), 0.6f);
+    }
+    
     void HideProfileMenu()
     {
         profile_menu.SetActive(false);
